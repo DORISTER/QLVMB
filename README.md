@@ -1,2 +1,85 @@
-# QLVMB
-quản lý hệ thống vé máy bay
+--# QLVMB
+--quản lý hệ thống vé máy bay
+CREATE DATABASE QLVMB;
+
+USE QLVMB;
+-- tạo bảng đường bay 
+CREATE TABLE DUONGBAY (
+    MaDuongBay VARCHAR(10) NOT NULL PRIMARY KEY,
+    ViTri VARCHAR(50) NOT NULL,
+    ChieuDai VARCHAR(10),
+    ChieuRong VARCHAR(10),
+    TinhTrang VARCHAR(50) NOT NULL
+);
+-- tạo bảng máy bay
+CREATE TABLE MAYBAY (
+    MaMayBay VARCHAR(10) NOT NULL PRIMARY KEY,
+    TenMayBay VARCHAR(50) NOT NULL,
+    HangSanXuat VARCHAR(30),
+    KichThuoc VARCHAR(50) NOT NULL,
+    SoGheL1 INT NOT NULL,
+    SoGheL2 INT NOT NULL,
+    Tong INT NOT NULL
+);
+-- tạo bảng chuyến bay
+CREATE TABLE CHUYENBAY (
+    MaChuyenBay VARCHAR(10) NOT NULL PRIMARY KEY,
+    MaDuongBay VARCHAR(10) NOT NULL,
+    MaMayBay VARCHAR(10) NOT NULL,
+    NgayDen DATE NOT NULL,
+    GhiChu TEXT,
+    NgayDi DATE NOT NULL,
+    GioBay TIME NOT NULL,
+    FOREIGN KEY (MaDuongBay) REFERENCES DUONGBAY(MaDuongBay),
+    FOREIGN KEY (MaMayBay) REFERENCES MAYBAY(MaMayBay)
+);
+--tạo bảng thông tin chi tiết
+CREATE TABLE THONGTINCHITIETVE (
+    MaVe VARCHAR(10) NOT NULL PRIMARY KEY,
+    MaChuyenBay VARCHAR(10) NOT NULL,
+    LoaiVe VARCHAR(30) NOT NULL,
+    SoLuong INT NOT NULL,
+    SoLuongCon INT NOT NULL,
+    Gia DECIMAL(10,2) NOT NULL,
+    FOREIGN KEY (MaChuyenBay) REFERENCES CHUYENBAY(MaChuyenBay)
+);
+-- tạo bảng vé bán 
+CREATE TABLE VEBAN (
+    MaVe VARCHAR(10) NOT NULL PRIMARY KEY,
+    MaHoaDon VARCHAR(10) NOT NULL,
+    SLVeBan INT NOT NULL,
+    MaNhanVien VARCHAR(10) NOT NULL,
+    MaKhachHang VARCHAR(10) NOT NULL,
+    MaChuyenBay VARCHAR(10) NOT NULL,
+    FOREIGN KEY (MaVe) REFERENCES THONGTINCHITIETVE(MaVe),
+    FOREIGN KEY (MaNhanVien) REFERENCES NHANVIEN(MaNhanVien),
+    FOREIGN KEY (MaKhachHang) REFERENCES KHACHHANG(MaKhachHang),
+    FOREIGN KEY (MaChuyenBay) REFERENCES CHUYENBAY(MaChuyenBay)
+);
+-- tạo bảng khách hàng 
+CREATE TABLE KHACHHANG (
+    MaKhachHang VARCHAR(10) NOT NULL PRIMARY KEY,
+    TenKhachHang VARCHAR(30) NOT NULL,
+    SoDienThoai VARCHAR(30) NOT NULL,
+    DiaChi VARCHAR(50) NOT NULL,
+    CMND VARCHAR(30) NOT NULL
+);
+-- tạo bảng nhân viên 
+CREATE TABLE NHANVIEN (
+    MaNhanVien VARCHAR(10) NOT NULL PRIMARY KEY,
+    TenNhanVien VARCHAR(30) NOT NULL,
+    DiaChi VARCHAR(30) NOT NULL,
+    SoDienThoai VARCHAR(50) NOT NULL,
+    ChucVu VARCHAR(30),
+    TenDangNhap VARCHAR(30) NOT NULL,
+    MatKhau VARCHAR(30) NOT NULL
+);
+-- tạo bảng thông báo 
+CREATE TABLE THONGBAO (
+    MaThongBao VARCHAR(10) NOT NULL PRIMARY KEY,
+    NhanVien VARCHAR(50) NOT NULL,
+    ThongBao TEXT NOT NULL,
+    ThoiGian DATETIME NOT NULL,
+    KiemTraChu TINYINT NOT NULL,
+    KiemTraTram TINYINT NOT NULL
+);
