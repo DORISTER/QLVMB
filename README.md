@@ -1,85 +1,157 @@
---# QLVMB
---quản lý hệ thống vé máy bay
-CREATE DATABASE QLVMB;
+create database QL_VeMayBay
+go
+use QL_VeMayBay
 
-USE QLVMB;
--- tạo bảng đường bay 
-CREATE TABLE DUONGBAY (
-    MaDuongBay VARCHAR(10) NOT NULL PRIMARY KEY,
-    ViTri VARCHAR(50) NOT NULL,
-    ChieuDai VARCHAR(10),
-    ChieuRong VARCHAR(10),
-    TinhTrang VARCHAR(50) NOT NULL
+-- T?o b?ng SANBAY
+CREATE TABLE SANBAY (
+    MaSanBay CHAR(10) PRIMARY KEY,
+    TenSanBay VARCHAR(100)
 );
--- tạo bảng máy bay
+
+-- T?o b?ng MAYBAY
 CREATE TABLE MAYBAY (
-    MaMayBay VARCHAR(10) NOT NULL PRIMARY KEY,
-    TenMayBay VARCHAR(50) NOT NULL,
-    HangSanXuat VARCHAR(30),
-    KichThuoc VARCHAR(50) NOT NULL,
-    SoGheL1 INT NOT NULL,
-    SoGheL2 INT NOT NULL,
-    Tong INT NOT NULL
+    MaMayBay CHAR(10) PRIMARY KEY,
+    LoaiMayBay VARCHAR(100)
 );
--- tạo bảng chuyến bay
+
+-- T?o b?ng TUYENBAY
+CREATE TABLE TUYENBAY (
+    MaTuyenBay CHAR(10) PRIMARY KEY,
+    MaSanBayDi CHAR(10),
+    MaSanBayDen CHAR(10),
+    FOREIGN KEY (MaSanBayDi) REFERENCES SANBAY(MaSanBay),
+    FOREIGN KEY (MaSanBayDen) REFERENCES SANBAY(MaSanBay)
+);
+
+-- T?o b?ng CHUYENBAY
 CREATE TABLE CHUYENBAY (
-    MaChuyenBay VARCHAR(10) NOT NULL PRIMARY KEY,
-    MaDuongBay VARCHAR(10) NOT NULL,
-    MaMayBay VARCHAR(10) NOT NULL,
-    NgayDen DATE NOT NULL,
-    GhiChu TEXT,
-    NgayDi DATE NOT NULL,
-    GioBay TIME NOT NULL,
-    FOREIGN KEY (MaDuongBay) REFERENCES DUONGBAY(MaDuongBay),
+    MaChuyenBay CHAR(10) PRIMARY KEY,
+    NgayGio DATETIME,
+    ThoiGianBay INT,
+    SoLuongGheHang1 INT,
+    SoLuongGheHang2 INT,
+    MaChiTietChuyenBay CHAR(10),
+    MaTuyenBay CHAR(10),
+    MaMayBay CHAR(10),
+    FOREIGN KEY (MaTuyenBay) REFERENCES TUYENBAY(MaTuyenBay),
     FOREIGN KEY (MaMayBay) REFERENCES MAYBAY(MaMayBay)
 );
---tạo bảng thông tin chi tiết
-CREATE TABLE THONGTINCHITIETVE (
-    MaVe VARCHAR(10) NOT NULL PRIMARY KEY,
-    MaChuyenBay VARCHAR(10) NOT NULL,
-    LoaiVe VARCHAR(30) NOT NULL,
-    SoLuong INT NOT NULL,
-    SoLuongCon INT NOT NULL,
-    Gia DECIMAL(10,2) NOT NULL,
+
+-- T?o b?ng CHITIETCHUYENBAY
+CREATE TABLE CHITIETCHUYENBAY (
+    MaChiTietChuyenBay CHAR(10) PRIMARY KEY,
+    SanBayTrungGian VARCHAR(100),
+    ThoiGianDung INT,
+    Ghichu TEXT,
+    MaChuyenBay CHAR(10),
     FOREIGN KEY (MaChuyenBay) REFERENCES CHUYENBAY(MaChuyenBay)
 );
--- tạo bảng vé bán 
-CREATE TABLE VEBAN (
-    MaVe VARCHAR(10) NOT NULL PRIMARY KEY,
-    MaHoaDon VARCHAR(10) NOT NULL,
-    SLVeBan INT NOT NULL,
-    MaNhanVien VARCHAR(10) NOT NULL,
-    MaKhachHang VARCHAR(10) NOT NULL,
-    MaChuyenBay VARCHAR(10) NOT NULL,
-    FOREIGN KEY (MaVe) REFERENCES THONGTINCHITIETVE(MaVe),
-    FOREIGN KEY (MaNhanVien) REFERENCES NHANVIEN(MaNhanVien),
-    FOREIGN KEY (MaKhachHang) REFERENCES KHACHHANG(MaKhachHang),
-    FOREIGN KEY (MaChuyenBay) REFERENCES CHUYENBAY(MaChuyenBay)
-);
--- tạo bảng khách hàng 
+
+-- T?o b?ng KHACHHANG
 CREATE TABLE KHACHHANG (
-    MaKhachHang VARCHAR(10) NOT NULL PRIMARY KEY,
-    TenKhachHang VARCHAR(30) NOT NULL,
-    SoDienThoai VARCHAR(30) NOT NULL,
-    DiaChi VARCHAR(50) NOT NULL,
-    CMND VARCHAR(30) NOT NULL
+    CMND CHAR(12) PRIMARY KEY,
+    TenKhachHang VARCHAR(100),
+    DienThoai VARCHAR(15)
 );
--- tạo bảng nhân viên 
+
+-- T?o b?ng NHANVIEN
 CREATE TABLE NHANVIEN (
-    MaNhanVien VARCHAR(10) NOT NULL PRIMARY KEY,
-    TenNhanVien VARCHAR(30) NOT NULL,
-    DiaChi VARCHAR(30) NOT NULL,
-    SoDienThoai VARCHAR(50) NOT NULL,
-    ChucVu VARCHAR(30),
-    TenDangNhap VARCHAR(30) NOT NULL,
-    MatKhau VARCHAR(30) NOT NULL
+    MaNhanVien CHAR(10) PRIMARY KEY,
+    TenNhanVien VARCHAR(100),
+    DienThoai VARCHAR(15)
 );
--- tạo bảng thông báo 
-CREATE TABLE THONGBAO (
-    MaThongBao VARCHAR(10) NOT NULL PRIMARY KEY,
-    NhanVien VARCHAR(50) NOT NULL,
-    ThongBao TEXT NOT NULL,
-    ThoiGian DATETIME NOT NULL,
-    KiemTraChu TINYINT NOT NULL,
-    KiemTraTram TINYINT NOT NULL
+
+-- T?o b?ng HANGVE
+CREATE TABLE HANGVE (
+    MaHangVe CHAR(10) PRIMARY KEY,
+    TenHangVe VARCHAR(100)
 );
+
+-- T?o b?ng DONGIA
+CREATE TABLE DONGIA (
+    MaDonGia CHAR(10) PRIMARY KEY,
+    USD DECIMAL(10,2),
+    VND DECIMAL(10,2)
+);
+
+-- T?o b?ng VECHUYENBAY
+CREATE TABLE VECHUYENBAY (
+    MaVeChuyenBay CHAR(10) PRIMARY KEY,
+    TinhTrangVe VARCHAR(50),
+    MaDonGia CHAR(10),
+    MaHangVe CHAR(10),
+    MaChuyenBay CHAR(10),
+    CMND CHAR(12),
+    FOREIGN KEY (MaDonGia) REFERENCES DONGIA(MaDonGia),
+    FOREIGN KEY (MaHangVe) REFERENCES HANGVE(MaHangVe),
+    FOREIGN KEY (MaChuyenBay) REFERENCES CHUYENBAY(MaChuyenBay),
+    FOREIGN KEY (CMND) REFERENCES KHACHHANG(CMND)
+);
+
+-- T?o b?ng PHIEUDATCHO
+CREATE TABLE PHIEUDATCHO (
+    MaPhieuDatCho CHAR(10) PRIMARY KEY,
+    NgayDat DATE,
+    SoGheDat INT,
+    CMND CHAR(12),
+    MaChuyenBay CHAR(10),
+    FOREIGN KEY (CMND) REFERENCES KHACHHANG(CMND),
+    FOREIGN KEY (MaChuyenBay) REFERENCES CHUYENBAY(MaChuyenBay)
+);
+
+-- T?o b?ng PHIEUDAT_HANGVE
+CREATE TABLE PHIEUDAT_HANGVE (
+    MaHangVe CHAR(10),
+    MaPhieuDatCho CHAR(10),
+    PRIMARY KEY (MaHangVe, MaPhieuDatCho),
+    FOREIGN KEY (MaHangVe) REFERENCES HANGVE(MaHangVe),
+    FOREIGN KEY (MaPhieuDatCho) REFERENCES PHIEUDATCHO(MaPhieuDatCho)
+);
+
+-- T?o b?ng HOADON
+CREATE TABLE HOADON (
+    MaHoaDon CHAR(10) PRIMARY KEY,
+    NgayHoaDon DATE,
+    ThanhTien DECIMAL(10,2),
+    CMND CHAR(12),
+    MaNhanVien CHAR(10),
+    MaDoanhThuThang CHAR(10),
+    FOREIGN KEY (CMND) REFERENCES KHACHHANG(CMND),
+    FOREIGN KEY (MaNhanVien) REFERENCES NHANVIEN(MaNhanVien)
+);
+
+
+
+
+-- T?o b?ng DOANHTHUTHANG v?i c?t MaHoaDon d? tham chi?u d?n b?ng HOADON
+CREATE TABLE DOANHTHUTHANG (
+    MaDoanhThuThang CHAR(10) PRIMARY KEY,
+    SoLuongVe INT,
+    DoanhThu DECIMAL(10,2),
+    MaHoaDon CHAR(10),
+    FOREIGN KEY (MaHoaDon) REFERENCES HOADON(MaHoaDon)
+);
+-- T?o b?ng DOANHTHUNAM
+
+CREATE TABLE DOANHTHUNAM (
+    MaDoanhThuNam CHAR(10) PRIMARY KEY,
+    SoLuongVe INT,
+    DoanhThu DECIMAL(10,2),
+    MaDoangThuThang CHAR(10),
+    FOREIGN KEY (MaDoangThuThang) REFERENCES DOANHTHUTHANG(MaDoanhThuThang)
+);
+select * from [dbo].[MAYBAY]
+select * from[dbo].[SANBAY]
+select * from [dbo].[TUYENBAY]
+select * from [dbo].[CHUYENBAY]
+select * from [dbo].[CHUYENBAY]
+select * from [dbo].[CHITIETCHUYENBAY]
+select * from [dbo].[KHACHHANG]
+select * from[dbo].[NHANVIEN]
+select * from[dbo].[HANGVE]
+select * from[dbo].[DONGIA]
+select * from[dbo].[VECHUYENBAY]
+select * from[dbo].[PHIEUDATCHO]
+select * from[dbo].[PHIEUDAT_HANGVE]
+select * from[dbo].[DOANHTHUTHANG]
+select * from[dbo].[DOANHTHUNAM]
